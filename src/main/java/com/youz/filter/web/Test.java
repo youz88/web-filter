@@ -1,11 +1,7 @@
 package com.youz.filter.web;
 
-import com.youz.filter.annotation.FilterParam;
-import com.youz.filter.enums.FilterType;
-
 public class Test {
 
-    @FilterParam({FilterType.Emoji})
     private String s1;
 
     private String s2;

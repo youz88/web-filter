@@ -1,8 +1,5 @@
 package com.youz.filter.web;
 
-import com.youz.filter.annotation.Filter;
-import com.youz.filter.annotation.FilterParam;
-import com.youz.filter.enums.FilterType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,8 +10,7 @@ import java.util.List;
 public class TestController {
 
     @GetMapping("/test1")
-    @Filter(FilterType.Emoji)
-    public String test1(@FilterParam(FilterType.Emoji) String p1, Test p2) {
+    public String test1(String p1, Test p2) {
         System.out.println("========>" + p1);
         System.out.println("========>" + p2);
         return "hello world";

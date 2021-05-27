@@ -1,5 +1,6 @@
 package com.youz.filter.web;
 
+import com.youz.filter.rule.Filter;
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 
 public class FilterPointcutAdvisor extends AspectJExpressionPointcutAdvisor {
@@ -13,13 +14,8 @@ public class FilterPointcutAdvisor extends AspectJExpressionPointcutAdvisor {
         setAdvice(filterAdvice);
     }
 
-    public FilterPointcutAdvisor excludePathPatterns(String... paths) {
-        filterAdvice.excludePathPatterns(paths);
-        return this;
-    }
-
-    public FilterPointcutAdvisor addPathPatterns(String... paths) {
-        filterAdvice.addPathPatterns(paths);
+    public FilterPointcutAdvisor addFilter(Filter... filter) {
+        filterAdvice.addFilters(filter);
         return this;
     }
 }
