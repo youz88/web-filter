@@ -1,6 +1,7 @@
 package com.youz.filter.web;
 
 import com.youz.filter.rule.Filter;
+import com.youz.filter.util.CommonUtil;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -19,25 +20,18 @@ public class FilterAdvice implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-        HttpServletRequest request = getRequest();
-        String url = request.getRequestURL().toString();
-        System.out.println(url);
-
-        Object[] arguments = methodInvocation.getArguments();
-        Method method = methodInvocation.getMethod();
-        Parameter[] parameters = method.getParameters();
-        for (int i = 0; i < parameters.length; i++) {
-            Parameter parameter = parameters[i];
-            Class<?> clazz = parameter.getType();
-            if (clazz == String.class) {
-
+        if (!CommonUtil.isEmpty(filterList)) {
+            HttpServletRequest request = getRequest();
+            String uri = request.getRequestURI();
+            for (Filter filter : filterList) {
+                filter.process(uri,methodInvocation.getArguments());
             }
         }
         return methodInvocation.proceed();
     }
 
     private HttpServletRequest getRequest() {
-        return  ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
     }
 
     public void addFilters(Filter[] filters) {

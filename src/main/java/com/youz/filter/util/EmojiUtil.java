@@ -40,4 +40,8 @@ public class EmojiUtil {
         }
     }
 
+    public static void main(String[] args) {
+        String str = "aaaaa\uD83C\uDD70";
+        System.out.println(EmojiUtil.filter(str));
+    }
 }

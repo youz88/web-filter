@@ -1,6 +1,8 @@
 package com.youz.filter.web;
 
-public class Test {
+import java.io.Serializable;
+
+public class Test implements Serializable {
 
     private String s1;
 
