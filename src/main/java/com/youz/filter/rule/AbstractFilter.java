@@ -22,9 +22,18 @@ public class AbstractFilter implements Filter {
     }
 
     @Override
-    public void process(String uri, Object... objs) { }
+    public void process(String uri, Object... objs) {
+        if (!match(uri)) {
+            return;
+        }
+        if (CommonUtil.isNotEmpty(objs)) {
+            doFilter(objs);
+        }
+    }
 
-    protected boolean match(String uri) {
+    protected void doFilter(Object... objs) { }
+
+    private boolean match(String uri) {
         if (CommonUtil.isBlank(uri)) {
             return false;
         }
