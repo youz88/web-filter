@@ -2,9 +2,8 @@ package com.youz.filter.rule;
 
 import com.youz.filter.util.CommonUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.*;
 
 public class AbstractFilter implements Filter {
 
@@ -31,7 +30,41 @@ public class AbstractFilter implements Filter {
         }
     }
 
-    protected void doFilter(Object... objs) { }
+    protected boolean fieldTypeFilter(Object o) {
+        return false;
+    }
+
+    protected String stringFilter(String str) {
+        return str;
+    }
+
+    private void doFilter(Object... objs) {
+        for (int i = 0; i < objs.length; i++) {
+            Object o = objs[i];
+            if (o == null || fieldTypeFilter(o)) {
+                continue;
+            }
+            if (o instanceof String) {
+                objs[i] = stringFilter(o.toString());
+            } else if (o instanceof Collection) {
+                Collection collection = (Collection) o;
+                if (CommonUtil.isNotEmpty(collection)) {
+                    doFilter(collection);
+                }
+            } else {
+                Field[] fields = o.getClass().getDeclaredFields();
+                for (Field field : fields) {
+                    if (String.class.isAssignableFrom(field.getType())) {
+                        try {
+                            field.set(o,stringFilter((String) field.get(o)));
+                        } catch (IllegalAccessException e) {
+                            // ignore
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private boolean match(String uri) {
         if (CommonUtil.isBlank(uri)) {
@@ -50,10 +83,4 @@ public class AbstractFilter implements Filter {
         return true;
     }
 
-    protected boolean isWrapPrimitive(Object o) {
-        return o instanceof Byte || o instanceof Short ||
-                o instanceof Integer || o instanceof Long ||
-                o instanceof Float || o instanceof Double ||
-                o instanceof Character || o instanceof Boolean;
-    }
 }
