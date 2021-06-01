@@ -1,24 +1,49 @@
 package com.youz.filter.rule;
 
+import com.youz.filter.constant.FilterConst;
 import com.youz.filter.util.CommonUtil;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AbstractFilter implements Filter {
 
-    private final List<String> excludePatterns = new ArrayList();
-    private final List<String> includePatterns = new ArrayList();
+    private final List<Pattern> excludePatterns = new ArrayList();
+    private final List<Pattern> includePatterns = new ArrayList();
 
-    public AbstractFilter excludePathPatterns(String... paths) {
-        excludePatterns.addAll(Arrays.asList(paths));
+    public AbstractFilter excludePathPatterns(String... patterns) {
+        Collection<? extends Pattern> patternList = initPatterns(patterns);
+        if (CommonUtil.isNotEmpty(patternList)) {
+            excludePatterns.addAll(patternList);
+        }
         return this;
     }
 
-    public AbstractFilter addPathPatterns(String... paths) {
-        includePatterns.addAll(Arrays.asList(paths));
+    public AbstractFilter includePatterns(String... patterns) {
+        includePatterns.addAll(initPatterns(patterns));
         return this;
     }
+
+
+    private Collection<? extends Pattern> initPatterns(String... patterns) {
+        if (CommonUtil.isEmpty(patterns)) return null;
+        List<Pattern> patternList = new ArrayList<>();
+
+        for (String pattern : patterns) {
+            if (CommonUtil.isBlank(pattern)) continue;
+            pattern = pattern.trim()
+                .replace("**", "$$")
+                .replace("*", "[^/]*?")
+                .replace("$$", "**")
+                .replace("**", ".*?");
+            patternList.add(Pattern.compile(pattern));
+        }
+
+        return patternList;
+    }
+
 
     @Override
     public void process(String uri, Object... objs) {
@@ -67,20 +92,27 @@ public class AbstractFilter implements Filter {
     }
 
     private boolean match(String uri) {
-        if (CommonUtil.isBlank(uri)) {
+        if (CommonUtil.isBlank(uri) ||
+                !matches(includePatterns,uri) ||
+                matches(excludePatterns,uri)) {
             return false;
         }
-        if (CommonUtil.isNotEmpty(includePatterns)) {
-            for (String includePattern : includePatterns) {
-
-            }
-        }
-        if (CommonUtil.isNotEmpty(excludePatterns)) {
-            for (String includePattern : includePatterns) {
-
-            }
+        if (CommonUtil.isEmpty(includePatterns) || CommonUtil.isEmpty(excludePatterns)) {
+            return true;
         }
         return true;
     }
 
+    private boolean matches(List<Pattern> patterns, String uri) {
+        if (CommonUtil.isEmpty(patterns)) {
+            return true;
+        }
+        for (Pattern pattern : patterns) {
+            Matcher matcher = pattern.matcher(uri);
+            if (matcher.matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

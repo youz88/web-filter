@@ -14,8 +14,8 @@ public class Application {
     @Bean
     public FilterPointcutAdvisor filterPointcutAdvisor() {
         FilterPointcutAdvisor advisor = new FilterPointcutAdvisor("com.youz.filter.web")
-                .addFilter(FilterType.Emoji.newInstance().addPathPatterns("").excludePathPatterns(""))
-                .addFilter(FilterType.Replace.newInstance(new HashMap(){{put("a","11111111");}}).addPathPatterns("").excludePathPatterns(""))
+                .addFilter(FilterType.Emoji.newInstance().includePatterns("").excludePathPatterns(""))
+                .addFilter(FilterType.Replace.newInstance(new HashMap(){{put("a","11111111");}}).includePatterns("").excludePathPatterns(""))
                 ;
         return advisor;
     }
