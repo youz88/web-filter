@@ -1,6 +1,5 @@
 package com.youz.filter.rule;
 
-import com.youz.filter.constant.FilterConst;
 import com.youz.filter.util.CommonUtil;
 
 import java.lang.reflect.Field;
@@ -92,20 +91,15 @@ public class AbstractFilter implements Filter {
     }
 
     private boolean match(String uri) {
-        if (CommonUtil.isBlank(uri) ||
-                !matches(includePatterns,uri) ||
-                matches(excludePatterns,uri)) {
+        if (CommonUtil.isBlank(uri)) {
             return false;
         }
-        if (CommonUtil.isEmpty(includePatterns) || CommonUtil.isEmpty(excludePatterns)) {
-            return true;
-        }
-        return true;
+        return matches(includePatterns, uri) && !matches(excludePatterns, uri);
     }
 
     private boolean matches(List<Pattern> patterns, String uri) {
         if (CommonUtil.isEmpty(patterns)) {
-            return true;
+            return false;
         }
         for (Pattern pattern : patterns) {
             Matcher matcher = pattern.matcher(uri);
