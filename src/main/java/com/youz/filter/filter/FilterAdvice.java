@@ -1,4 +1,4 @@
-package com.youz.filter.web;
+package com.youz.filter.filter;
 
 import com.youz.filter.rule.Filter;
 import com.youz.filter.util.CommonUtil;
@@ -8,8 +8,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

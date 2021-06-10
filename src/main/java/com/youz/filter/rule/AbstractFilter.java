@@ -12,7 +12,7 @@ public class AbstractFilter implements Filter {
     private final List<Pattern> excludePatterns = new ArrayList();
     private final List<Pattern> includePatterns = new ArrayList();
 
-    public AbstractFilter excludePathPatterns(String... patterns) {
+    public AbstractFilter excludePatterns(String... patterns) {
         Collection<? extends Pattern> patternList = initPatterns(patterns);
         if (CommonUtil.isNotEmpty(patternList)) {
             excludePatterns.addAll(patternList);
