@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 public class AbstractFilter implements Filter {
 
+    private final Set<String> resolvedMethods = new HashSet<>(16);
     private final List<Pattern> excludePatterns = new ArrayList();
     private final List<Pattern> includePatterns = new ArrayList();
 
@@ -25,28 +26,14 @@ public class AbstractFilter implements Filter {
         return this;
     }
 
-
-    private Collection<? extends Pattern> initPatterns(String... patterns) {
-        if (CommonUtil.isEmpty(patterns)) return null;
-        List<Pattern> patternList = new ArrayList<>();
-
-        for (String pattern : patterns) {
-            if (CommonUtil.isBlank(pattern)) continue;
-            pattern = pattern.trim()
-                .replace("**", "$$")
-                .replace("*", "[^/]*?")
-                .replace("$$", "**")
-                .replace("**", ".*?");
-            patternList.add(Pattern.compile(pattern));
-        }
-
-        return patternList;
+    public Filter allowedMethods(String... methods) {
+        resolvedMethods.addAll(Arrays.asList(methods));
+        return this;
     }
 
-
     @Override
-    public void process(String uri, Object... objs) {
-        if (!match(uri)) {
+    public void process(String method, String uri, Object... objs) {
+        if (!match(method,uri)) {
             return;
         }
         if (CommonUtil.isNotEmpty(objs)) {
@@ -90,8 +77,25 @@ public class AbstractFilter implements Filter {
         }
     }
 
-    private boolean match(String uri) {
-        if (CommonUtil.isBlank(uri)) {
+    private Collection<? extends Pattern> initPatterns(String... patterns) {
+        if (CommonUtil.isEmpty(patterns)) return null;
+        List<Pattern> patternList = new ArrayList<>();
+
+        for (String pattern : patterns) {
+            if (CommonUtil.isBlank(pattern)) continue;
+            pattern = pattern.trim()
+                    .replace("**", "$oo$")
+                    .replace("*", "[^/]*?")
+                    .replace("$oo$", "**")
+                    .replace("**", ".*?");
+            patternList.add(Pattern.compile(pattern));
+        }
+
+        return patternList;
+    }
+
+    private boolean match(String method, String uri) {
+        if (CommonUtil.isBlank(uri) || !resolvedMethods.contains(method)) {
             return false;
         }
         return matches(includePatterns, uri) && !matches(excludePatterns, uri);
@@ -109,4 +113,5 @@ public class AbstractFilter implements Filter {
         }
         return false;
     }
+
 }

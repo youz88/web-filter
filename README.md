@@ -18,8 +18,9 @@
         public FilterPointcutAdvisor filterPointcutAdvisor() {
             // 设置需要扫描的接口包路径，可以设置多个
             FilterPointcutAdvisor advisor = new FilterPointcutAdvisor("path1","path2")
-            // includePatterns：手动设置路径匹配规则
-            // excludePatterns: 手动设置路径排除规则
+            // includePatterns：请求路径匹配规则
+            // excludePatterns: 请求路径排除规则
+            // allowedMethods: 允许请求方式类型(GET、POST...)
             .addFilter(FilterType.Emoji.newInstance().includePatterns("/**").excludePatterns(""))
             // 构造函数需传递参数，需要进行替换的字符串模板，java.util.Map类型
             .addFilter(FilterType.Replace.newInstance(java.util.Map).includePatterns("/**").excludePatterns(""))

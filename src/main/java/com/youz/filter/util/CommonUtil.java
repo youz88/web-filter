@@ -11,7 +11,7 @@ public class CommonUtil {
     }
 
     public static <T> boolean isEmpty(Collection<T> collection) {
-        return collection == null || collection.size() == 0;
+        return collection == null || collection.isEmpty();
     }
 
     public static <T> boolean isNotEmpty(Collection<T> collection) {

@@ -20,9 +20,8 @@ public class FilterAdvice implements MethodInterceptor {
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         if (!CommonUtil.isEmpty(filterList)) {
             HttpServletRequest request = getRequest();
-            String uri = request.getRequestURI();
             for (Filter filter : filterList) {
-                filter.process(uri,methodInvocation.getArguments());
+                filter.process(request.getMethod(),request.getRequestURI(),methodInvocation.getArguments());
             }
         }
         return methodInvocation.proceed();
