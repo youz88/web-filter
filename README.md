@@ -12,7 +12,9 @@
 #### 配置
 
 ```java
-    import java.util.Map;@SpringBootApplication
+    import java.util.Map;
+
+    @SpringBootApplication
     public class Application {
         @Bean
         public FilterPointcutAdvisor filterPointcutAdvisor() {
