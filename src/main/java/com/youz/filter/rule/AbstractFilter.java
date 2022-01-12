@@ -22,7 +22,10 @@ public class AbstractFilter implements Filter {
     }
 
     public AbstractFilter includePatterns(String... patterns) {
-        includePatterns.addAll(initPatterns(patterns));
+        Collection<? extends Pattern> patternList = initPatterns(patterns);
+        if (CommonUtil.isNotEmpty(patternList)) {
+            includePatterns.addAll(patternList);
+        }
         return this;
     }
 
@@ -33,7 +36,7 @@ public class AbstractFilter implements Filter {
 
     @Override
     public void process(String method, String uri, Object... objs) {
-        if (!match(method,uri)) {
+        if (!match(method, uri)) {
             return;
         }
         if (CommonUtil.isNotEmpty(objs)) {
@@ -67,7 +70,7 @@ public class AbstractFilter implements Filter {
                 for (Field field : fields) {
                     if (String.class.isAssignableFrom(field.getType())) {
                         try {
-                            field.set(o,stringFilter((String) field.get(o)));
+                            field.set(o, stringFilter((String) field.get(o)));
                         } catch (IllegalAccessException e) {
                             // ignore
                         }
@@ -77,12 +80,19 @@ public class AbstractFilter implements Filter {
         }
     }
 
+    /**
+     * 初始化正则表达式
+     *
+     * @param patterns 请求资源路径
+     * @return
+     */
     private Collection<? extends Pattern> initPatterns(String... patterns) {
         if (CommonUtil.isEmpty(patterns)) return null;
-        List<Pattern> patternList = new ArrayList<>();
 
+        List<Pattern> patternList = new ArrayList<>();
         for (String pattern : patterns) {
             if (CommonUtil.isBlank(pattern)) continue;
+
             pattern = pattern.trim()
                     .replace("**", "$oo$")
                     .replace("*", "[^/]*?")
@@ -90,10 +100,16 @@ public class AbstractFilter implements Filter {
                     .replace("**", ".*?");
             patternList.add(Pattern.compile(pattern));
         }
-
         return patternList;
     }
 
+    /**
+     * 判断是否拦截该方法
+     *
+     * @param method 请求方法（GET|POST...）
+     * @param uri    请求资源路径
+     * @return
+     */
     private boolean match(String method, String uri) {
         if (CommonUtil.isBlank(uri) || !resolvedMethods.contains(method)) {
             return false;
@@ -101,10 +117,16 @@ public class AbstractFilter implements Filter {
         return matches(includePatterns, uri) && !matches(excludePatterns, uri);
     }
 
+    /**
+     * 判断请求资源对象是否匹配正则
+     *
+     * @param patterns 拦截正则表达式
+     * @param uri      请求资源路径
+     * @return
+     */
     private boolean matches(List<Pattern> patterns, String uri) {
-        if (CommonUtil.isEmpty(patterns)) {
-            return false;
-        }
+        if (CommonUtil.isEmpty(patterns)) return false;
+
         for (Pattern pattern : patterns) {
             Matcher matcher = pattern.matcher(uri);
             if (matcher.matches()) {

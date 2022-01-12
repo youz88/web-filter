@@ -6,7 +6,10 @@ public class FilterException extends RuntimeException implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public FilterException(String msg) {super(msg); this.errorMessage = msg;}
+    public FilterException(String msg) {
+        super(msg);
+        this.errorMessage = msg;
+    }
 
     public FilterException(String code, String msg) {
         super(msg);

@@ -18,10 +18,10 @@ public class FilterAdvice implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-        if (!CommonUtil.isEmpty(filterList)) {
+        if (CommonUtil.isNotEmpty(filterList)) {
             HttpServletRequest request = getRequest();
             for (Filter filter : filterList) {
-                filter.process(request.getMethod(),request.getRequestURI(),methodInvocation.getArguments());
+                filter.process(request.getMethod(), request.getRequestURI(), methodInvocation.getArguments());
             }
         }
         return methodInvocation.proceed();

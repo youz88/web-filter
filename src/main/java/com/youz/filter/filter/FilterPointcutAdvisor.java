@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class FilterPointcutAdvisor extends AspectJExpressionPointcutAdvisor {
 
-    private final String RELACE_PATH = "${path}";
+    private final String REPLACE_PATH = "${path}";
     private final String DEFAULT_PATH = "execution(* ${path}.*.*(..))";
     private FilterAdvice filterAdvice = new FilterAdvice();
 
@@ -19,7 +19,7 @@ public class FilterPointcutAdvisor extends AspectJExpressionPointcutAdvisor {
             throw new FilterException("scan path cannot be empty");
         }
         String expression = Arrays.stream(paths)
-                .map(o -> DEFAULT_PATH.replace(RELACE_PATH, o))
+                .map(o -> DEFAULT_PATH.replace(REPLACE_PATH, o))
                 .collect(Collectors.joining(" || ", "(", ")"));
         setExpression(expression);
         setAdvice(filterAdvice);

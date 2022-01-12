@@ -2,11 +2,12 @@ package com.youz.filter.rule;
 
 import com.youz.filter.exception.FilterException;
 import com.youz.filter.util.CommonUtil;
+
 import java.util.Map;
 
 public class ReplaceFilter extends AbstractFilter {
 
-    private Map<?,?> replaceTemplate;
+    private Map<?, ?> replaceTemplate;
 
     public ReplaceFilter(Object... objs) {
         if (CommonUtil.isEmpty(objs) || objs.length > 1) {
@@ -22,7 +23,7 @@ public class ReplaceFilter extends AbstractFilter {
     @Override
     protected String stringFilter(String str) {
         for (Map.Entry<?, ?> entry : replaceTemplate.entrySet()) {
-            str = str.replace(entry.getKey().toString(),entry.getValue().toString());
+            str = str.replace(entry.getKey().toString(), entry.getValue().toString());
         }
         return str;
     }
